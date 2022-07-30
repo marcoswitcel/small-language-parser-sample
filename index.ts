@@ -44,36 +44,26 @@ function str(match: string): Parser<string> {
     }
 }
 
+function sequence<T>(parsers: Parser<T>[]): Parser<T[]> {
+    return (ctx) => {
+        const values: T[] = [];
+        let nextCtx = ctx;
+        for (const parser of parsers) {
+            const res = parser(nextCtx);
+            if (!res.success) return res;
+            values.push(res.value);
+            nextCtx = res.ctx;
+        }
+        return success(nextCtx, values);
+    }
+}
+
 const cow = str("cow");
 const says = str("says");
 const moo = str("moo");
 const space = str(" ");
 
-const parseCowSentence = (ctx: Context) => {
-    const cowRes = cow(ctx);
-    if (!cowRes.success) return cowRes;
-
-    // Precisa passar o Context da etapa acima/anterior para o próximo parser
-    const spaceRes = space(cowRes.ctx);
-    if (!spaceRes.success) return spaceRes;
-
-    const saysRes = says(spaceRes.ctx);
-    if (!saysRes.success) return saysRes;
-
-    const spaceRes2 = space(saysRes.ctx);
-    if (!spaceRes2.success) return spaceRes2;
-
-    const mooRes = moo(spaceRes2.ctx);
-    if (!mooRes.success) return mooRes;
-
-    return success(mooRes.ctx, [
-        cowRes.value,
-        spaceRes.value,
-        saysRes.value,
-        spaceRes2.value,
-        mooRes.value,
-    ]);
-}
+const parseCowSentence = sequence([ cow, space, says, space, moo ]);
 
 
 const ctx = { text: "cow says moo", index: 0 };
