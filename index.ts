@@ -28,15 +28,18 @@ function failure<T>(ctx: Context, expected: string): Failure {
     return { success: false, expected, ctx };
 }
 
-const parseCow : Parser<string> = (ctx) => {
-    const match = "cow";
-    const endIdx = ctx.index + match.length;
-    if (ctx.text.substring(ctx.index, endIdx) === match) {
-        return success({ ...ctx, index: endIdx }, match);
-    } else {
-        return failure(ctx, match);
+function str(match: string): Parser<string> {
+    return (ctx) => {
+        const endIdx = ctx.index + match.length;
+        if (ctx.text.substring(ctx.index, endIdx) === match) {
+            return success({ ...ctx, index: endIdx }, match);
+        } else {
+            return failure(ctx, match);
+        }
     }
 }
+
+const parseCow = str("cow");
 
 const ctx = { text: "cow says moo", index: 0 };
 const result = parseCow(ctx);
