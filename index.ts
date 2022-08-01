@@ -44,6 +44,50 @@ function str(match: string): Parser<string> {
     }
 }
 
+/**
+ * Gera parsers para expressões regulares específicas
+ * @param re RegEx usada para realizar a identificação da sequência
+ * @param expected Mensagem de aviso exibida quando houver erros
+ * @returns Parser especializado em parser a expressão especificada
+ */
+function regex(re: RegExp, expected: string): Parser<string> {
+    return ctx => {
+        re.lastIndex = ctx.index;
+        const res =  re.exec(ctx.text);
+        if (res && res.index === ctx.index) {
+            return success({ ...ctx, index: ctx.index + res[0].length }, res[0]);
+        } else {
+            return failure(ctx, expected);
+        }
+    };
+}
+
+
+/**
+ * Testa todos os parsers em ordem e começando do mesmo ponto, retorna o 
+ * primeiro que tiver sucesso parseando.
+ * @param parsers Lista de parsers
+ * @returns Return o primeiro que sucedeu ou a falha mais profunda
+ */
+function any<T>(parsers: Parser<T>[]): Parser<T> {
+    return ctx => {
+        let furthestRes : Result<T> | null = null;
+        for (const parser of parsers) {
+            const res =  parser(ctx);
+            if (res.success) return res;
+            if (!furthestRes || furthestRes.ctx.index < res.ctx.index) {
+                furthestRes = res;
+            }
+        }
+
+        if (furthestRes === null) {
+            return failure(ctx, "No match on any combinator");
+        } 
+
+        return furthestRes;
+    }
+}
+
 function sequence<T>(parsers: Parser<T>[]): Parser<T[]> {
     return (ctx) => {
         const values: T[] = [];
