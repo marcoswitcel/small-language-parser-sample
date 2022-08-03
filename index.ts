@@ -88,6 +88,53 @@ function any<T>(parsers: Parser<T>[]): Parser<T> {
     }
 }
 
+/**
+ * Checa que um parser consegue consumir um sequência, senão retorna sucesso com null
+ * @param parser parser opcional
+ * @returns Retorna o sucesso do primeiro parser ou em caso falha retorna sucesso com null
+ */
+function optional<T>(parser: Parser<T>): Parser<T | null> {
+    return any([ parser, (ctx) => success(ctx, null) ]);
+}
+
+
+/**
+ * Procura por zero ou mais ocorrências de uma dada sequência, até não haver
+ * mais matches. Se não achar nenhum ocorrência retornará lista vazia, esse
+ * combinador nunca falha.
+ * @param parser parser usado para consumir sequências
+ * @returns Retorna a lista de valores encontrados, se não houver valores
+ * retornará um lista vazia.
+ */
+function many<T>(parser: Parser<T>): Parser<T[]> {
+    return ctx => {
+        const values : T[] = [];
+        let nextCtx = ctx;
+        while (true) {
+            const res = parser(nextCtx);
+            if (!res.success) break;
+            values.push(res.value);
+            nextCtx = res.ctx;
+        }
+        return success(nextCtx, values);
+    };
+}
+
+/**
+ * Um método auxiliar que permitirá a nós fazermos coisas como montar
+ * nós da AST a partir das strings consumidas.
+ * @param parser Parser usado para fazer o match da sequência
+ * @param fn callback que será chamado para cada sequência consumida e
+ * realizará a troca do valor
+ * @returns Retorna um novo parser com callback
+ */
+function map<A, B>(parser: Parser<A>, fn: (val: A) => B): Parser<B> {
+    return ctx => {
+        const res = parser(ctx);
+        return res.success ? success(ctx, fn(res.value)) : res;
+    }
+}
+
 function sequence<T>(parsers: Parser<T>[]): Parser<T[]> {
     return (ctx) => {
         const values: T[] = [];
