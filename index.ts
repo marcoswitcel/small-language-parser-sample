@@ -131,7 +131,7 @@ function many<T>(parser: Parser<T>): Parser<T[]> {
 function map<A, B>(parser: Parser<A>, fn: (val: A) => B): Parser<B> {
     return ctx => {
         const res = parser(ctx);
-        return res.success ? success(ctx, fn(res.value)) : res;
+        return res.success ? success(res.ctx, fn(res.value)) : res;
     }
 }
 
