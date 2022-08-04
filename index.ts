@@ -24,7 +24,7 @@ function success<T>(ctx: Context, value: T): Success<T> {
     return { success: true, value, ctx };
 }
 
-function failure<T>(ctx: Context, expected: string): Failure {
+function failure(ctx: Context, expected: string): Failure {
     return { success: false, expected, ctx };
 }
 
@@ -94,7 +94,7 @@ function any<T>(parsers: Parser<T>[]): Parser<T> {
  * @returns Retorna o sucesso do primeiro parser ou em caso falha retorna sucesso com null
  */
 function optional<T>(parser: Parser<T>): Parser<T | null> {
-    return any([ parser, (ctx) => success(ctx, null) ]);
+    return any([parser, (ctx) => success(ctx, null)]);
 }
 
 
@@ -157,7 +157,7 @@ function sequence<T>(parsers: Parser<T>[]): Parser<T[]> {
     const moo = str("moo");
     const space = str(" ");
     
-    const parseCowSentence = sequence([ cow, space, says, space, moo ]);
+    const parseCowSentence = sequence([cow, space, says, space, moo]);
     
     
     const ctx = { text: "cow says moo", index: 0 };
@@ -209,7 +209,7 @@ function sequence<T>(parsers: Parser<T>[]): Parser<T[]> {
         sequence<any>([str(","), expr]),
         // mapeado para um função que descarta a vírgula,
         // retornando apenas a expressão do argumento
-        ([ _comma, argExpr]): Expr[] => argExpr
+        ([_comma, argExpr]): Expr[] => argExpr
     );
 
     // args = expr ( trailingArg ) *
