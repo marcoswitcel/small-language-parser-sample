@@ -1,3 +1,14 @@
+# Executando scripts com o Deno
+
+```bash
+deno run index.js
+```
+
+# Compilando a versão Web
+
+```bash
+deno bundle --config web-deno.json web.ts web/index.js
+```
 
 # Definição de termos
 
