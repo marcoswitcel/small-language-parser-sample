@@ -16,5 +16,6 @@ inputTag.addEventListener('keyup', () => {
         errorTag.innerText = '';
     } catch (error) {
         errorTag.innerText = error;
+        preTag.innerText = '';
     }
 });

@@ -12,8 +12,13 @@ deno run index.js
 
 ## Compilando a versão Web
 
+Gerando o arquivo para o ambiente de produção.
 ```bash
 deno bundle --config web-deno.json web.ts web/index.js
+```
+Deixando o compilador monitorando o arquivo por modificações.
+```bash
+deno bundle --config web-deno.json --watch web.ts web/index.js
 ```
 
 ## Definição de termos
