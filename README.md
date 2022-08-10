@@ -1,4 +1,4 @@
-# Um exemplo de um parser implementado combinadores de parsers
+# Exemplo de um parser simples implementado usando combinadores de parsers
 
 O exemplo contido nesse repositório segue em grande parte o tutorial presente nesse link: [https://www.sigmacomputing.com/blog/writing-a-parser-combinator-from-scratch-in-typescript/](https://www.sigmacomputing.com/blog/writing-a-parser-combinator-from-scratch-in-typescript/)
 
@@ -6,17 +6,18 @@ Demo: [https://marcoswitcel.github.io/small-language-parser-sample/web/](https:/
 
 ## Executando scripts com o Deno
 
+Rodando versão de linha de comando.
 ```bash
 deno run index.js
 ```
 
 ## Compilando a versão Web
 
-Gerando o arquivo para o ambiente de produção.
+Gerando o arquivo de distribuição.
 ```bash
 deno bundle --config web-deno.json web.ts web/index.js
 ```
-Deixando o compilador monitorando o arquivo por modificações.
+Deixando o compilador em modo de monitoramento do arquivo para facilitar o desenvolvimento.
 ```bash
 deno bundle --config web-deno.json --watch web.ts web/index.js
 ```
